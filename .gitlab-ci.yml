@@ -1,0 +1,42 @@
+variables:
+  
+  K8S_API_DEV_TEST: "https://api.rhocp-test-dev.elcld.net:6443" # this is the OC cluster Api 
+  K8S_API_STG_PRD: "https://api.rhocp-test-dev.elcld.net:6443"
+  K8S_NAMESPACE_STG: "demo-app-stg" # this is the name of the namespace inside the OC cluster 
+  K8S_NAMESPACE_PRD: "demo-app-prd" 
+  K8S_APPNAME: "demo-app-snake" # this is the name of the imagestream and the deployment name in the namespace in OC
+  Dockerfile_Path: "Dockerfile" # this is the place where the docker file exit 
+  Dockerfile_Root_Dir: "."
+  Build_ARG: "" # this is the arguemnt that the docker run set at the build of the image
+  TAG_PREFIX: "demo-app/" #image tag after build 
+  TAG_PREFIX_RULE_REGEX: "/^demo-app\/.*$/"
+  Deploy_Strategy: "image" 
+  Appsonar_infosec_email: "true" # will be delete from template
+
+
+##### For DEV ENV##
+  # K8S_TOKEN_DEV: ""
+  Develop: "true"
+  K8S_NAMESPACE_DEV: "demo-app-devel"
+  K8S_APPNAME_DEV: "$K8S_APPNAME"
+  Dockerfile_DEV_Path: "$Dockerfile_Path"
+  Dockerfile_DEV_Root_Dir: "$Dockerfile_Root_Dir"
+  Build_ARG_DEV: ""   
+
+
+include:
+  - project: 'ci-cd-templates/deployment' # this is a repo in gitlab that has the deployment template
+    ref: main # branch name
+    file: /.gitlab-ci.yml
+
+
+stages:
+    - Build-and-Scan # this will be deleted
+    - Deploy-Stage
+    - Testing-Stage
+    - Create_Release
+    - Deploy-Production
+    - Testing-Production
+    - Send-Email-Reply
+
+ 
